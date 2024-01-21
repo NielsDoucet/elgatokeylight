@@ -5,7 +5,7 @@ echo "connecting to lights on ips ${ips[@]}"
 
 send_payload() {
   for ip in "${ips[@]}"; do
-    curl -s -L -X PUT "http://$ip:9123/elgato/lights" -H 'Content-Type: application/json' -d "$1"
+    curl -s -L -X PUT "http://$ip:9123/elgato/lights" -H 'Content-Type: application/json' -d "$1" -o /dev/null
   done
 }
 
