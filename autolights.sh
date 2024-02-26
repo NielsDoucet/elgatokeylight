@@ -15,7 +15,7 @@ toggle_lights() {
 
 detect_camera_ventura() {
   # Begin looking at the system log via the stream sub-command.
-  # Using a --predicate and filtering by the correct and pull out the camera event
+  # Using a --predicate and filtering by the camera subsystem and pull out the camera event
   log stream --predicate 'subsystem == "com.apple.UVCExtension" and composedMessage contains "Post PowerLog"' | while read -r line; do
     # If we catch a camera start event, turn the light on.
     if echo "$line" | grep -q "= On"; then
@@ -31,15 +31,15 @@ detect_camera_ventura() {
 
 detect_camera_sonoma() {
   # Begin looking at the system log via the stream sub-command.
-  # Using a --predicate and filtering by the correct and pull out the camera event
-  log stream --predicate 'composedMessage contains "AppleH13CamIn::power_"' | while read -r line; do
+  # Using a --predicate and filtering by the camera process and pull out the camera event
+  log stream --predicate 'process contains "appleh13camerad"' | while read -r line; do
     # If we catch a camera start event, turn the light on.
-    if echo "$line" | grep -qE "power_on_hardware$"; then
+    if echo "$line" | grep -qE "start streaming for client"; then
       toggle_lights 1
     fi
 
     # If we catch a camera stop event, turn the light off.
-    if echo "$line" | grep -qE "power_off_hardware$"; then
+    if echo "$line" | grep -qE "stop streaming for client"; then
       toggle_lights 0
     fi
   done
